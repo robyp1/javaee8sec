@@ -153,10 +153,10 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jta="true" jndi-name="java:/jdbc/soteria" pool-name="SOTERIA" enabled="true" use-ccm="true">
+                <datasource jta="true" jndi-name="java:jboss/jdbc/soteria" pool-name="soteria" enabled="true" use-java-context="true">
                     <connection-url>jdbc:hsqldb:hsql://localhost:9001/SOTERIA</connection-url>
-                    <driver-class>org.hsqldb.jdbc.JDBCDriver</driver-class>
-                    <driver>hsqldb-2.4.0.jar</driver>
+                    <!--<driver-class>org.hsqldb.jdbc.JDBCDriver</driver-class>-->
+                    <driver>hsqldb</driver>
                     <security>
                         <user-name>sa</user-name>
                     </security>
@@ -165,7 +165,7 @@
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
                     </driver>
-                    <driver name="hsql" module="org.hsql">
+                    <driver name="hsqldb" module="org.hsqldb">
                         <datasource-class>org.hsqldb.jdbc.JDBCDataSource</datasource-class>
                     </driver>
                 </drivers>
@@ -434,9 +434,9 @@
         </outbound-socket-binding>
     </socket-binding-group>
 
-    <deployments>
-        <deployment name="hsqldb-2.4.0.jar" runtime-name="hsqldb-2.4.0.jar">
-            <content sha1="195957160ed990dbc798207c0d577280d9919208"/>
-        </deployment>
-    </deployments>
+    <!--<deployments>-->
+        <!--<deployment name="hsqldb-2.4.0.jar" runtime-name="hsqldb-2.4.0.jar">-->
+            <!--<content sha1="195957160ed990dbc798207c0d577280d9919208"/>-->
+        <!--</deployment>-->
+    <!--</deployments>-->
 </server>
