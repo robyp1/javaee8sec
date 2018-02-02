@@ -103,6 +103,9 @@
                             <url>
                                 http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip
                             </url>
+                            <!--<url>-->
+                                <!--https://www.dropbox.com/s/ugukptcgv99764t/wildfly-10.1.0.Final.zip?dl=1-->
+                            <!--</url>-->
                         </zipUrlInstaller>
                         <dependencies>
                             <!--<dependency>-->
