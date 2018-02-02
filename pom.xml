@@ -34,6 +34,15 @@
             <version>2.4.0</version>
         </dependency>
 
+        <!--migrando a wildfly che usa hibernate per non cambiare persistence.xml
+            bisogna dirli dove prendere eclipselink-->
+        <dependency>
+            <groupId>org.eclipse.persistence</groupId>
+            <artifactId>eclipselink</artifactId>
+            <version>2.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <finalName>javaee-soteria</finalName>
@@ -94,12 +103,12 @@
                                 <configfile>true</configfile>
                                 <overwrite>true</overwrite>
                             </copy>
-                                <copy>
-                                    <file>${project.basedir}/src/main/jboss/modules/</file>
-                                    <todir>../../installs//wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules/system/layers/base</todir>
-                                    <configfile>true</configfile>
-                                    <overwrite>true</overwrite>
-                            </copy>
+                            <!--<copy>-->
+                                    <!--<file>${project.basedir}/src/main/jboss/modules/</file>-->
+                                    <!--<todir>../../installs//wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules/system/layers/base</todir>-->
+                                    <!--<configfile>true</configfile>-->
+                                    <!--<overwrite>true</overwrite>-->
+                            <!--</copy>-->
                             <copy>
                                 <file>${project.basedir}/src/main/jboss/configuration/</file>
                                 <todir>

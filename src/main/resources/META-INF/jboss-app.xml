@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-app>
+    <!--<resource-ref>
+        <res-ref-name>../..</res-ref-name>
+        <lookup-name>java:jboss/../lookup-name>
+    </resource-ref>-->
+</jboss-app>

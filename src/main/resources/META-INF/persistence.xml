@@ -4,17 +4,23 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
     <persistence-unit name="soteria" transaction-type="JTA">
         <jta-data-source>java:jboss/jdbc/soteria</jta-data-source>
+        <!-- only for jboss -->
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <!-- TODO: parameterize this -->
         <properties>
+            <!--specialized props -->
+            <property name="eclipselink.target-database" value="HSQL"/>
+            <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver" />
+            <!-- end sp. props-->
             <property name="eclipselink.logging.level.sql" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.logging.timestamp" value="true"/>
             <!--ddl and db creation-->
-            <!--<property name="eclipselink.application-location" value="C:/Progetti/altri/javaee-soteria-master/src/main/resources/db/"/>-->
+            <property name="eclipselink.application-location" value="C:/Progetti/altri/javaee-soteria-master/src/main/resources/db/hsql"/>
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <!--<property name="eclipselink.create-ddl-jdbc-file-name" value="createDDL_ddlGeneration.jdbc"/>-->
-            <!--<property name="eclipselink.drop-ddl-jdbc-file-name" value="dropDDL_ddlGeneration.jdbc"/>-->
-            <!--<property name="eclipselink.ddl-generation.output-mode" value="both"/>-->
+            <property name="eclipselink.create-ddl-jdbc-file-name" value="createDDL_ddlGeneration.jdbc"/>
+            <property name="eclipselink.drop-ddl-jdbc-file-name" value="dropDDL_ddlGeneration.jdbc"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="both"/>
 
         </properties>
     </persistence-unit>
