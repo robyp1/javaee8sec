@@ -5,6 +5,7 @@
             <module name="org.hsqldb" />
             <module name="org.eclipse.persistence" />
             <module name="sun.jdk"/>
+            <module name="org.wildfly.extension.undertow" services="export" export="true" /> <!--for jaspic security context-->
         </dependencies>
         <!--<exclusions>-->
             <!--<module name="org.slf4j" />-->
