@@ -31,15 +31,43 @@
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.4.0</version>
+            <version>2.3.2</version>
         </dependency>
 
         <!--migrando a wildfly che usa hibernate per non cambiare persistence.xml
             bisogna dirli dove prendere eclipselink-->
+        <!--<dependency>-->
+            <!--<groupId>org.eclipse.persistence</groupId>-->
+            <!--<artifactId>eclipselink</artifactId>-->
+            <!--<version>2.7.1</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
+
         <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.7.1</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-tools</artifactId>
+            <version>5.0.0.Final</version>
+            <scope>provided</scope>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>hibernate-commons-annotations</artifactId>-->
+                    <!--<groupId>org.hibernate</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>log4j</groupId>-->
+                    <!--<artifactId>log4j</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.slf4j</groupId>-->
+                    <!--<artifactId>slf4j-api</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>4.1.0.Final</version>
             <scope>provided</scope>
         </dependency>
 
@@ -104,10 +132,10 @@
                                 <overwrite>true</overwrite>
                             </copy>
                             <!--<copy>-->
-                                    <!--<file>${project.basedir}/src/main/jboss/modules/</file>-->
-                                    <!--<todir>../../installs//wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules/system/layers/base</todir>-->
-                                    <!--<configfile>true</configfile>-->
-                                    <!--<overwrite>true</overwrite>-->
+                                <!--<file>${project.basedir}/src/main/jboss/modules/</file>-->
+                                <!--<todir>../../installs//wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules/system/layers/base</todir>-->
+                                <!--<configfile>true</configfile>-->
+                                <!--<overwrite>true</overwrite>-->
                             <!--</copy>-->
                             <copy>
                                 <file>${project.basedir}/src/main/jboss/configuration/</file>

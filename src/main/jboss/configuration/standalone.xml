@@ -117,6 +117,12 @@
             <logger category="sun.rmi">
                 <level name="WARN"/>
             </logger>
+            <!--<logger category="org.eclipse.persistence.sql">-->
+                <!--<level name="DEBUG"/>-->
+            <!--</logger>-->
+            <logger category="org.jboss.as.jpa">
+                <level name="INFO"/>
+            </logger>
             <root-logger>
                 <level name="INFO"/>
                 <handlers>
@@ -154,7 +160,7 @@
                     </security>
                 </datasource>
                 <datasource jta="true" jndi-name="java:jboss/jdbc/soteria" pool-name="soteria" enabled="true" use-java-context="true">
-                    <connection-url>jdbc:hsqldb:hsql://localhost:9001/SOTERIA</connection-url>
+                    <connection-url>jdbc:hsqldb:hsql://localhost:9001/soteria</connection-url>
                     <!--<driver-class>org.hsqldb.jdbc.JDBCDriver</driver-class>-->
                     <driver>hsqldb</driver>
                     <security>

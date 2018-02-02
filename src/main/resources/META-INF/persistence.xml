@@ -5,19 +5,25 @@
     <persistence-unit name="soteria" transaction-type="JTA">
         <jta-data-source>java:jboss/jdbc/soteria</jta-data-source>
         <!-- only for jboss -->
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <!--<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>-->
         <!-- TODO: parameterize this -->
+        <class>id.swhp.javaee.soteria.business.account.entity.Account</class>
+        <class>id.swhp.javaee.soteria.business.security.entity.Token</class>
         <properties>
-            <property name="eclipselink.logging.level.sql" value="FINE"/>
-            <property name="eclipselink.logging.parameters" value="true"/>
-            <property name="eclipselink.logging.timestamp" value="true"/>
-            <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <!--<property name="eclipselink.logging.level.sql" value="FINE"/>-->
+            <!--<property name="eclipselink.logging.parameters" value="true"/>-->
+            <!--<property name="eclipselink.logging.timestamp" value="true"/>-->
+            <!--<property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>-->
+            <!--<property name="eclipselink.ddl-generation.output-mode" value="database"/>-->
             <!--ddl and db creation-->
             <!--<property name="eclipselink.application-location" value="C:/Progetti/altri/javaee-soteria-master/src/main/resources/db/hsql"/>-->
             <!--<property name="eclipselink.create-ddl-jdbc-file-name" value="createDDL_ddlGeneration.jdbc"/>-->
             <!--<property name="eclipselink.drop-ddl-jdbc-file-name" value="dropDDL_ddlGeneration.jdbc"/>-->
 
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
     </persistence-unit>
 </persistence>
