@@ -1,62 +1,39 @@
 # Java EE Security Soteria
+
 Playing around with new JSR-375 (Security API) and _Reference Implementation_ Soteria.
+
+Linked from the real Project (MIT license):
 https://medium.com/@swhp/playing-with-java-ee-security-jsr-375-soteria-38e8d2b094d4
+
+This implementation is for Wildfly 10x and HSQL
+
 ## Installation
 
 ### Requirements
 * Java 8
 * Apache Maven
-* PostgreSQL 9.5
-* [Payara Full Webserver](https://www.payara.fish/downloads)
+* HSQL 3.2.2
+* Wildfly 10+ WebServer
 
 ### Database Schema
-* Prepare user and database on PostgreSQL.
+Run application server with persistence.xml this property set:
 
-```
-CREATE USER demo WITH PASSWORD 'password';
-CREATE DATABASE soteriadb OWNER demo ENCODING 'UTF-8';
-GRANT ALL PRIVILEGES ON DATABASE soteriadb TO demo;
-```
+ <property name="hibernate.hbm2ddl.auto" value="drop-create"/>
 
-* Execute `schema.sql`.
+After database creation reset property to "validate"
 
-```
-psql -U demo -d soteriadb -a -f ./src/main/resources/db/schema.sql
-```
 
-### Application Server (Payara / Glassfish)
+### Application Server (Wildfly)
 
-#### PostgreSQL JDBC Driver
-Download [PostgreSQL jdbc driver](https://jdbc.postgresql.org/download/postgresql-42.1.4.jre6.jar) 
-and put it into `${PAYARA_HOME}/glassfish/domains/${YOUR_DOMAIN}/lib`
+#### HSQL JDBC Driver
 
-```
-curl -o ${PAYARA_HOME}/glassfish/domains/${PAYARA_DOMAIN}/lib/postgresql-41.1.4.jar -L https://jdbc.postgresql.org/download/postgresql-42.1.4.jre6.jar
-```
+Go to src\jboss\modules
 
-#### JDBC Resource and Pool
-Make sure working directory on `${PAYARA_HOME}/bin`.
+Copy directory \hsqldb in
 
-* Start Application Server.
+\wildfly-10.1.0.Final\modules\system\layers\base\org
 
-```
-./asadmin start-domain ${PAYARA_DOMAIN}
-```
 
-* Create JDBC Pool.
-
-```
-./asadmin create-jdbc-connection-pool \
---datasourceclassname org.postgresql.ds.PGConnectionPoolDataSource \
---restype javax.sql.ConnectionPoolDataSource \
---property User=demo:Password=password:DatabaseName=soteriadb:ServerName=localhost:PortNumber=5432 Soteria
-```
-
-* Create JDBC Resource.
-
-```
-./asadmin create-jdbc-resource --connectionpoolid Soteria jdbc/soteria
-```
 
 ### Compile and Package
 Being Maven centric, compile and package can be done:
@@ -70,9 +47,16 @@ To simplified it can be done:
 
 ```
 mvn clean install
-```
 
 Once you have the war file, you can deploy it.
+
+```
+If you want you can run cargo with wildfly installation process:
+
+1. mvn cargo:install  (install Wildfly in target\cargo directory)
+2. copy hsql as descrived before
+3. mvn cargo:run (start wildfly server)
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would
