@@ -18,7 +18,7 @@ This implementation is for Wildfly 10x and HSQL
 ### Database Schema
 Run application server with persistence.xml this property set:
 
- <property name="hibernate.hbm2ddl.auto" value="drop-create"/>
+ &lt;property name="hibernate.hbm2ddl.auto" value="drop-create"/&gt;
 
 After database creation reset property to "validate"
 
@@ -51,12 +51,13 @@ mvn clean install
 Once you have the war file, you can deploy it.
 
 ```
-If you want you can run cargo with wildfly installation process:
+If you want, you can run cargo with wildfly installation in process:
 
+```
 1. mvn cargo:install  (install Wildfly in target\cargo directory)
 2. copy hsql as descrived before
 3. mvn cargo:run (start wildfly server)
-
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would
