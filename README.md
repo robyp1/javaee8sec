@@ -18,7 +18,7 @@ This implementation is for Wildfly 10x and HSQL
 ### Database Schema
 Run application server with persistence.xml this property set:
 
- &lt;property name="hibernate.hbm2ddl.auto" value="drop-create"/&gt;
+ &lt;property name="hibernate.hbm2ddl.auto" value="create-drop"/&gt;
 
 After database creation reset property to "validate"
 
