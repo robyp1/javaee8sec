@@ -70,7 +70,7 @@ public class TokenStore {
 
     public void remove(String token) {
         this.em.createNamedQuery(Token.REMOVE_TOKEN)
-                .setParameter("tokenHash", token).executeUpdate();
+                .setParameter("tokenHash", this.hash.getHashedText(token)).executeUpdate();
     }
 
     public void removeExpired() {
