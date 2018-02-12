@@ -1,10 +1,13 @@
 package id.swhp.javaee.soteria.presentation;
 
-import static org.omnifaces.util.Messages.addGlobalInfo;
-
 import id.swhp.javaee.soteria.business.account.boundary.AccountStore;
+import id.swhp.javaee.soteria.business.account.entity.UserNameNotTaken;
+
 import javax.enterprise.inject.Model;
 import javax.inject.Inject;
+import javax.validation.Valid;
+
+import static org.omnifaces.util.Messages.addGlobalInfo;
 
 /**
  *
@@ -30,7 +33,7 @@ public class Register {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@Valid @UserNameNotTaken String username) {
         this.username = username;
     }
 

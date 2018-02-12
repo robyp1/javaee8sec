@@ -7,4 +7,10 @@ package id.swhp.javaee.soteria.business.exception.boundary;
  */
 public class InvalidUsernameException extends BusinessException {
 
+    public InvalidUsernameException(String message) {
+        super(message);
+    }
+
+    public InvalidUsernameException() {
+    }
 }
