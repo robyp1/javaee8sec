@@ -4,18 +4,7 @@ import id.swhp.javaee.soteria.business.security.entity.Token;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -34,12 +23,15 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = Account.FIND_BY_EMAIL, query = "select a from Account a where a.email = :email")
     ,
     @NamedQuery(name = Account.FIND_BY_TOKEN, query = "select a from Account a inner join a.tokens t where t.tokenHash = :tokenHash and t.tokenType = :tokenType and t.expiration > CURRENT_TIMESTAMP")
+    ,
+    @NamedQuery(name = Account.FAILED_ACESS_THRESHOLD, query = "select a from Account a where a.username =:username and a.failedConsecutiveLogin > 5" )
 })
 public class Account implements Serializable {
 
     public static final String FIND_BY_USERNAME = "Account.findByUsername";
     public static final String FIND_BY_EMAIL = "Account.findByEmail";
     public static final String FIND_BY_TOKEN = "Account.findByToken";
+    public static final String FAILED_ACESS_THRESHOLD = "Account.loginFailedAttempt";
 
     @Id
     @GeneratedValue(generator = "account_id_seq", strategy = GenerationType.SEQUENCE)
@@ -64,6 +56,10 @@ public class Account implements Serializable {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Token> tokens = new ArrayList<>();
 
+    @Column(name = "num_login_failed")
+    @Basic(optional = true)
+    private Integer failedConsecutiveLogin;
+
     public Account() {
     }
 
@@ -71,6 +67,7 @@ public class Account implements Serializable {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.failedConsecutiveLogin = 0;
     }
 
     public Long getId() {
@@ -115,6 +112,14 @@ public class Account implements Serializable {
 
     public List<Token> getTokens() {
         return tokens;
+    }
+
+    public Integer getFailedConsecutiveLogin() {
+        return failedConsecutiveLogin;
+    }
+
+    public void setFailedConsecutiveLogin(Integer failedConsecutiveLogin) {
+        this.failedConsecutiveLogin = failedConsecutiveLogin;
     }
 
     /* Both method addToken and removeToken is necessary, to avoid propagation issue see: https://vladmihalcea.com/2017/03/29/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/#more-7143 */

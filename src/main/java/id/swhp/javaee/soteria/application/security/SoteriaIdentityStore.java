@@ -1,12 +1,11 @@
 package id.swhp.javaee.soteria.application.security;
 
-import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
-import static javax.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
-
 import id.swhp.javaee.soteria.business.account.boundary.AccountStore;
 import id.swhp.javaee.soteria.business.account.entity.Account;
 import id.swhp.javaee.soteria.business.exception.boundary.AccountNotVerifiedException;
 import id.swhp.javaee.soteria.business.exception.boundary.InvalidCredentialException;
+import id.swhp.javaee.soteria.business.exception.boundary.InvalidPasswordException;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -15,6 +14,9 @@ import javax.security.enterprise.credential.Credential;
 import javax.security.enterprise.credential.UsernamePasswordCredential;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.security.enterprise.identitystore.IdentityStore;
+
+import static javax.security.enterprise.identitystore.CredentialValidationResult.INVALID_RESULT;
+import static javax.security.enterprise.identitystore.CredentialValidationResult.NOT_VALIDATED_RESULT;
 
 /**
  *
@@ -37,8 +39,15 @@ public class SoteriaIdentityStore implements IdentityStore {
             if (credential instanceof UsernamePasswordCredential) {
                 String username = ((UsernamePasswordCredential) credential).getCaller();
                 String password = ((UsernamePasswordCredential) credential).getPasswordAsString();
+                try {
 
-                return validate(this.accountStore.getByUsernameAndPassword(username, password));
+                    return validate(this.accountStore.getByUsernameAndPassword(username, password));
+
+                } catch (InvalidPasswordException e) {
+                    Account account = this.accountStore.getByUsername(username).orElseThrow(InvalidCredentialException::new);
+                    accountStore.incLoginFailedAttempt(account);
+                    throw e;
+                }
             }
 
             // check if the credential was UsernamePasswordCredential
@@ -63,6 +72,7 @@ public class SoteriaIdentityStore implements IdentityStore {
             throw new AccountNotVerifiedException();
         }
 
-        return new CredentialValidationResult(account.getUsername());
+        CredentialValidationResult credentialValidationResult = new CredentialValidationResult(account.getUsername());
+        return credentialValidationResult;
     }
 }

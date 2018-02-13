@@ -95,4 +95,10 @@ public class AccountStore {
 
         return managedAccount;
     }
+
+    public void incLoginFailedAttempt(Account account) {
+        account.setFailedConsecutiveLogin(account.getFailedConsecutiveLogin()+1);
+        this.em.merge(account);
+        this.em.flush();
+    }
 }
