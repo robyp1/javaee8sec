@@ -49,7 +49,8 @@ public class TokenStore {
         return rawToken;
     }
 
-    public void save(final String rawToken, final String username, final String ipAddress,
+
+    public Account save(final String rawToken, final String username, final String ipAddress,
             final String description, final TokenType tokenType, final Instant expiration) {
 
         Account account = this.accountStore.getByUsername(username)
@@ -66,6 +67,8 @@ public class TokenStore {
         account.addToken(token);
 
         this.em.merge(account);
+
+        return account;
     }
 
     public void remove(String token) {
