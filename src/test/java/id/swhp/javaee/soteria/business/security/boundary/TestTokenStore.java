@@ -1,10 +1,11 @@
 package id.swhp.javaee.soteria.business.security.boundary;
 
 import id.swhp.javaee.soteria.business.account.boundary.AccountStore;
+import id.swhp.javaee.soteria.business.account.boundary.TestSHAGenerator;
 import id.swhp.javaee.soteria.business.account.entity.Account;
 import id.swhp.javaee.soteria.business.security.control.SHAGenerator;
 import id.swhp.javaee.soteria.business.security.entity.*;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -15,30 +16,36 @@ import javax.persistence.EntityManager;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TestSHAGenerator {
+public class TestTokenStore extends TestSHAGenerator {
 
     @InjectMocks
 //    @HashServiceType(HashType.SHA)
 //    @Sha(algorithm = SHAAlgorithm.SHA256)
-    private HashGenerator hash =new SHAGenerator(SHAAlgorithm.SHA256.getAlgorithmName());
+    private HashGenerator hashTest =new SHAGenerator(SHAAlgorithm.SHA256.getAlgorithmName());
+//
 
-
-    @Mock
+    @InjectMocks
     private TokenStore tokenStore;
 
-    @Mock
-    private AccountStore accountStore;
 
     @Mock
-    private EntityManager em;
+    private EntityManager _em;
+
+
+    @Before
+    public void initTests(){
+        tokenStore.em = _em;
+        tokenStore.hash = mock(HashGenerator.class);
+    }
 
     @Test
     public void test_SHAAlgorithm_generator(){
-        String passwordhash = hash.getHashedText("123456AB");
+        String passwordhash = hashTest.getHashedText("123456AB");
         when(tokenStore.generate(any(), any(), any(), any())).thenReturn(passwordhash);
         assertThat(tokenStore.generate("","","", TokenType.REMEMBER_ME)).isEqualTo(passwordhash);
 
@@ -49,14 +56,15 @@ public class TestSHAGenerator {
     public void test_TokeStore_Save(){
 
         Account accountExpected = new Account("admin", "password", "email@email");
-        accountExpected.setId(1L);
-        when(accountStore.getByUsername(any()))
-                .thenReturn(Optional.of(accountExpected));
+        accountExpected.setId(null);
+//        when(accountStore.getByUsername(any()))
+//                .thenReturn(Optional.of(accountExpected));
 
-        when(hash.getHashedText("ABCD")).thenReturn("1234");
+        when(tokenStore.hash.getHashedText("ABCD")).thenReturn("1234");
 
-        when(em.merge(any())).thenReturn("");
+        when(tokenStore.em.merge(any())).thenReturn(accountExpected);
 
+        //TEST METHOD SAVE
         Account accountActual = tokenStore.save("ABCD", "", "", "", TokenType.REMEMBER_ME, null);
 
         Token token = new Token();
