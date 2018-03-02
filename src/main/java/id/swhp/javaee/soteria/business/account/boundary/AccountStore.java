@@ -51,12 +51,20 @@ public class AccountStore {
         this.em.persist(account);
     }
 
+    public Account getByUsername1(String username) {
+        try {
+            return
+                    this.em.createNamedQuery(Account.FIND_BY_USERNAME, Account.class)
+                            .setParameter("username", username).getSingleResult();
+        } catch (NoResultException ex) {
+            throw ex;
+        }
+    }
+
+
     public Optional<Account> getByUsername(final String username) {
         try {
-            return Optional.of(
-                    this.em.createNamedQuery(Account.FIND_BY_USERNAME, Account.class)
-                            .setParameter("username", username).getSingleResult()
-            );
+            return Optional.of(getByUsername1(username));
         } catch (NoResultException ex) {
             return Optional.empty();
         }

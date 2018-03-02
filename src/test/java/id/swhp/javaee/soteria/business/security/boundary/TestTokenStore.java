@@ -41,24 +41,26 @@ public class TestTokenStore extends TestSHAGenerator {
     public void initTests(){
         tokenStore.em = _em;
         tokenStore.hash = mock(HashGenerator.class);
+        initAccountStore(_em);
     }
 
-    @Test
-    public void test_SHAAlgorithm_generator(){
-        String passwordhash = hashTest.getHashedText("123456AB");
-        when(tokenStore.generate(any(), any(), any(), any())).thenReturn(passwordhash);
-        assertThat(tokenStore.generate("","","", TokenType.REMEMBER_ME)).isEqualTo(passwordhash);
-
-
-    }
+//    @Test
+//    public void test_SHAAlgorithm_generator(){
+//        String passwordhash = hashTest.getHashedText("123456AB");
+//        when(tokenStore.generate(any(), any(), any(), any())).thenReturn(passwordhash);
+//        assertThat(tokenStore.generate("","","", TokenType.REMEMBER_ME)).isEqualTo(passwordhash);
+//
+//
+//    }
 
     @Test
     public void test_TokeStore_Save(){
 
         Account accountExpected = new Account("admin", "password", "email@email");
         accountExpected.setId(null);
-//        when(accountStore.getByUsername(any()))
-//                .thenReturn(Optional.of(accountExpected));
+
+        when(accountStore.getByUsername1("admin"))
+                .thenReturn(accountExpected);
 
         when(tokenStore.hash.getHashedText("ABCD")).thenReturn("1234");
 
