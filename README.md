@@ -65,5 +65,23 @@ like to change.
 
 Please make sure to update tests as appropriate.
 
+Resume steps:
+
+* Running in web-App application (standalone external wildfly server)*
+1)mvn clean install -Pdefault (dont be afraid about cargo running with wildfly and errors displayed)
+2)copy jboss/configuration/standalone.xml in external wildfly server standalone/configuration (replace file inside)
+3)copy jboss/modules/org/*.* in external modules/system/layers/base/org directory
+4)copy war in external wildfly10x server or deploy it using wildfly:deploy (wildfly maven plugin)
+5)install HsqlDb, run hsqldb and create empty database soteria
+6)run wildfly by standalone.bat
+7)open browser to
+http://localhost:8080/javaee-soteria/register.xhtml to register new user
+http://localhost:8080/javaee-soteria/login.xhtml to login with a valid user
+
+*Running test*
+1)cargo:install (cargo download and run wildfly in the target directory, then stopping)
+2)install HsqlDb, run hsqldb and create empty database soteria
+3) mvn install -> run junit and itegration tests (*IT.java) -> cargo launch wildfly and integration tests
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)

@@ -5,6 +5,17 @@
     <artifactId>javaee-soteria</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <jee.api.version>8.0</jee.api.version>
+        <hibernate.version>5.0.0.Final</hibernate.version>
+        <IT.skipTests>false</IT.skipTests><!--avvia cargo e lancia i test di integrazione -->
+       <JunitTest.skip>true</JunitTest.skip> <!--per ora i test junit sono fermi-->
+    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -20,7 +31,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>8.0</version>
+            <version>${jee.api.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -57,7 +68,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-tools</artifactId>
-            <version>5.0.0.Final</version>
+            <version>${hibernate.version}</version>
             <scope>provided</scope>
             <!--<exclusions>-->
                 <!--<exclusion>-->
@@ -115,116 +126,167 @@
     </dependencies>
     <build>
         <finalName>javaee-soteria</finalName>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.20.1</version>
+                    <configuration>
+                        <skipTests>${JunitTest.skip}</skipTests>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
+        <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <version>1.5.0</version>
+            <configuration>
+                <container>
+                    <containerId>wildfly10x</containerId>
+                    <zipUrlInstaller>
+                        <url>
+                            http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip
+                        </url>
+                        <!--<url>-->
+                        <!--https://www.dropbox.com/s/ugukptcgv99764t/wildfly-10.1.0.Final.zip?dl=1-->
+                        <!--</url>-->
+                    </zipUrlInstaller>
+                    <dependencies>
+                        <!--<dependency>-->
+                        <!--<groupId>com.oracle</groupId>-->
+                        <!--<artifactId>jdbc6</artifactId>-->
+                        <!--</dependency>-->
+                        <dependency>
+                            <groupId>org.hsqldb</groupId>
+                            <artifactId>hsqldb</artifactId>
+                        </dependency>
+                    </dependencies>
+                </container>
+                <configuration>
+                    <files>
+                        <copy>
+                            <file>${project.basedir}/src/main/jboss/configuration/</file>
+                            <todir>
+                                ../../installs/wildfly-10.1.0.Final/wildfly-10.1.0.Final/standalone/configuration
+                            </todir>
+                            <configfile>true</configfile>
+                            <overwrite>true</overwrite>
+                        </copy>
+                        <copy>
+                            <file>${project.basedir}/src/main/jboss/configuration/</file>
+                            <todir>../../configurations/wildfly10x/configuration</todir>
+                            <configfile>true</configfile>
+                            <overwrite>true</overwrite>
+                        </copy>
+                        <!--<copy>-->
+                        <!--<file>${project.basedir}/src/main/jboss/modules/</file>-->
+                        <!--<todir>../../installs//wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules/system/layers/base</todir>-->
+                        <!--<configfile>true</configfile>-->
+                        <!--<overwrite>true</overwrite>-->
+                        <!--</copy>-->
+                        <copy>
+                            <file>${project.basedir}/src/main/jboss/configuration/</file>
+                            <todir>
+                                ../../installs/wildfly-10.1.0.Final/wildfly-10.1.0.Final/standalone/configuration
+                            </todir>
+                            <configfile>true</configfile>
+                            <overwrite>true</overwrite>
+                        </copy>
+                    </files>
+                    <properties>
+                        <cargo.start.jvmargs>
+                            -Xdebug
+                            -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9000
+                            -Xnoagent
+                            -Djava.compiler=NONE
+                        </cargo.start.jvmargs>
+                        <cargo.jboss.modules.dir>modules</cargo.jboss.modules.dir>
+                        <cargo.servlet.port>9090</cargo.servlet.port>
+                        <cargo.jboss.management-http.port>9050</cargo.jboss.management-http.port>
+                        <cargo.servlet.users>admin:admin</cargo.servlet.users>
+                    </properties>
+                </configuration>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>start-server</id>
+                    <phase>pre-integration-test</phase>
+                    <goals>
+                        <goal>start</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>stop-server</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>stop</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.20.1</version>
                 <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/webapp/WEB-INF</directory>
-                            <targetPath>WEB-INF</targetPath>
-                            <includes>
-                                <include>*.xml</include>
-                            </includes>
-                            <filtering>true</filtering>
-                        </resource>
-                    </webResources>
+                    <skipITs>${IT.skipTests}</skipITs>
+                    <includes> <!--classi di test finiscono in IT = integration test -->
+                        <include>**/*IT.java</include>
+                    </includes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
-                <version>1.5.0</version>
-                <configuration>
-                    <container>
-                        <containerId>wildfly10x</containerId>
-                        <zipUrlInstaller>
-                            <url>
-                                http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip
-                            </url>
-                            <!--<url>-->
-                                <!--https://www.dropbox.com/s/ugukptcgv99764t/wildfly-10.1.0.Final.zip?dl=1-->
-                            <!--</url>-->
-                        </zipUrlInstaller>
-                        <dependencies>
-                            <!--<dependency>-->
-                                <!--<groupId>com.oracle</groupId>-->
-                                <!--<artifactId>jdbc6</artifactId>-->
-                            <!--</dependency>-->
-                            <dependency>
-                                <groupId>org.hsqldb</groupId>
-                                <artifactId>hsqldb</artifactId>
-                            </dependency>
-                        </dependencies>
-                    </container>
-                    <configuration>
-                        <files>
-                            <copy>
-                                <file>${project.basedir}/src/main/jboss/configuration/</file>
-                                <todir>
-                                    ../../installs/wildfly-10.1.0.Final/wildfly-10.1.0.Final/standalone/configuration
-                                </todir>
-                                <configfile>true</configfile>
-                                <overwrite>true</overwrite>
-                            </copy>
-                            <copy>
-                                <file>${project.basedir}/src/main/jboss/configuration/</file>
-                                <todir>../../configurations/wildfly10x/configuration</todir>
-                                <configfile>true</configfile>
-                                <overwrite>true</overwrite>
-                            </copy>
-                            <!--<copy>-->
-                                <!--<file>${project.basedir}/src/main/jboss/modules/</file>-->
-                                <!--<todir>../../installs//wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules/system/layers/base</todir>-->
-                                <!--<configfile>true</configfile>-->
-                                <!--<overwrite>true</overwrite>-->
-                            <!--</copy>-->
-                            <copy>
-                                <file>${project.basedir}/src/main/jboss/configuration/</file>
-                                <todir>
-                                    ../../installs/wildfly-10.1.0.Final/wildfly-10.1.0.Final/standalone/configuration
-                                </todir>
-                                <configfile>true</configfile>
-                                <overwrite>true</overwrite>
-                            </copy>
-                        </files>
-                        <properties>
-                            <cargo.start.jvmargs>
-                                -Xdebug
-                                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9000
-                                -Xnoagent
-                                -Djava.compiler=NONE
-                            </cargo.start.jvmargs>
-                            <cargo.jboss.modules.dir>modules</cargo.jboss.modules.dir>
-                            <cargo.servlet.port>9090</cargo.servlet.port>
-                            <cargo.jboss.management-http.port>9050</cargo.jboss.management-http.port>
-                            <cargo.servlet.users>admin:admin</cargo.servlet.users>
-                        </properties>
-                    </configuration>
-                </configuration>
-            </plugin>
-            <!--for external wildfly server-->
-            <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>1.2.1.Final</version>
-                <configuration>
-                    <hostname>127.0.0.1</hostname>
-                    <port>9090</port>
-                    <username>admin</username>
-                    <password>admin</password>
-                </configuration>
-            </plugin>
-            <!-- -->
         </plugins>
     </build>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <failOnMissingWebXml>false</failOnMissingWebXml>
-    </properties>
+    <profiles>
+        <profile>
+            <id>default</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/webapp/WEB-INF</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                    <includes>
+                                        <include>*.xml</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                    <!--for external wildfly server-->
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <version>1.2.1.Final</version>
+                        <configuration>
+                            <hostname>127.0.0.1</hostname>
+                            <port>9090</port>
+                            <username>admin</username>
+                            <password>admin</password>
+                        </configuration>
+                    </plugin>
+                </plugins>
+                <!-- -->
+            </build>
+        </profile>
+    </profiles>
 </project>
