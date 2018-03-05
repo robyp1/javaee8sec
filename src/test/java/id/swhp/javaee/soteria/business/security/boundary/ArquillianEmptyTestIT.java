@@ -10,6 +10,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 @RunWith(Arquillian.class)
 public class ArquillianEmptyTestIT {
 

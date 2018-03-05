@@ -14,7 +14,10 @@
         <jee.api.version>8.0</jee.api.version>
         <hibernate.version>5.0.0.Final</hibernate.version>
         <IT.skipTests>false</IT.skipTests><!--avvia cargo e lancia i test di integrazione -->
-       <JunitTest.skip>true</JunitTest.skip> <!--per ora i test junit sono fermi-->
+        <JunitTest.skip>true</JunitTest.skip> <!--per ora i test junit sono fermi-->
+        <wildfly.home.module>${project.basedir}/cargo/wildfly-10.1.0.Final/wildfly-10.1.0.Final</wildfly.home.module>
+        <!--<wildfly.home.parent>${project.basedir}/.cargo/wildfly-10.1.0.Final/wildfly-10.1.0.Final</wildfly.home.parent>-->
+        <jboss.home>${wildfly.home.module}</jboss.home>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -125,7 +128,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>javaee-soteria</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName> <!--javaee-soteria-1.0.0.war-->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -133,105 +136,27 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.20.1</version>
                     <configuration>
+                        <systemPropertyVariables>
+                            <!--<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>-->
+                            <jboss.home>${jboss.home}</jboss.home>
+                            <module.path>${jboss.home}/modules</module.path>
+                        </systemPropertyVariables>
                         <skipTests>${JunitTest.skip}</skipTests>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
-        <plugin>
-            <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-maven2-plugin</artifactId>
-            <version>1.5.0</version>
-            <configuration>
-                <container>
-                    <containerId>wildfly10x</containerId>
-                    <zipUrlInstaller>
-                        <url>
-                            http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip
-                        </url>
-                        <!--<url>-->
-                        <!--https://www.dropbox.com/s/ugukptcgv99764t/wildfly-10.1.0.Final.zip?dl=1-->
-                        <!--</url>-->
-                    </zipUrlInstaller>
-                    <dependencies>
-                        <!--<dependency>-->
-                        <!--<groupId>com.oracle</groupId>-->
-                        <!--<artifactId>jdbc6</artifactId>-->
-                        <!--</dependency>-->
-                        <dependency>
-                            <groupId>org.hsqldb</groupId>
-                            <artifactId>hsqldb</artifactId>
-                        </dependency>
-                    </dependencies>
-                </container>
-                <configuration>
-                    <files>
-                        <copy>
-                            <file>${project.basedir}/src/main/jboss/configuration/</file>
-                            <todir>
-                                ../../installs/wildfly-10.1.0.Final/wildfly-10.1.0.Final/standalone/configuration
-                            </todir>
-                            <configfile>true</configfile>
-                            <overwrite>true</overwrite>
-                        </copy>
-                        <copy>
-                            <file>${project.basedir}/src/main/jboss/configuration/</file>
-                            <todir>../../configurations/wildfly10x/configuration</todir>
-                            <configfile>true</configfile>
-                            <overwrite>true</overwrite>
-                        </copy>
-                        <!--<copy>-->
-                        <!--<file>${project.basedir}/src/main/jboss/modules/</file>-->
-                        <!--<todir>../../installs//wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules/system/layers/base</todir>-->
-                        <!--<configfile>true</configfile>-->
-                        <!--<overwrite>true</overwrite>-->
-                        <!--</copy>-->
-                        <copy>
-                            <file>${project.basedir}/src/main/jboss/configuration/</file>
-                            <todir>
-                                ../../installs/wildfly-10.1.0.Final/wildfly-10.1.0.Final/standalone/configuration
-                            </todir>
-                            <configfile>true</configfile>
-                            <overwrite>true</overwrite>
-                        </copy>
-                    </files>
-                    <properties>
-                        <cargo.start.jvmargs>
-                            -Xdebug
-                            -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9000
-                            -Xnoagent
-                            -Djava.compiler=NONE
-                        </cargo.start.jvmargs>
-                        <cargo.jboss.modules.dir>modules</cargo.jboss.modules.dir>
-                        <cargo.servlet.port>9090</cargo.servlet.port>
-                        <cargo.jboss.management-http.port>9050</cargo.jboss.management-http.port>
-                        <cargo.servlet.users>admin:admin</cargo.servlet.users>
-                    </properties>
-                </configuration>
-            </configuration>
-            <executions>
-                <execution>
-                    <id>start-server</id>
-                    <phase>pre-integration-test</phase>
-                    <goals>
-                        <goal>start</goal>
-                    </goals>
-                </execution>
-                <execution>
-                    <id>stop-server</id>
-                    <phase>post-integration-test</phase>
-                    <goals>
-                        <goal>stop</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>2.20.1</version>
                 <configuration>
+                    <systemPropertyVariables>
+                        <!--<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>-->
+                        <jboss.home>${jboss.home}</jboss.home>
+                        <module.path>${jboss.home}/modules</module.path>
+                    </systemPropertyVariables>
                     <skipITs>${IT.skipTests}</skipITs>
                     <includes> <!--classi di test finiscono in IT = integration test -->
                         <include>**/*IT.java</include>
@@ -239,9 +164,81 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>integration-test</id>
                         <goals>
                             <goal>integration-test</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
                             <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.5.0</version>
+                <configuration>
+                    <container>
+                        <containerId>wildfly10x</containerId>
+                        <zipUrlInstaller>
+                            <url>
+                                http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip
+                            </url>
+                            <downloadDir>${project.basedir}/cargo/downloads</downloadDir>
+                            <extractDir>${project.basedir}/cargo</extractDir>
+                        </zipUrlInstaller>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.hsqldb</groupId>
+                                <artifactId>hsqldb</artifactId>
+                            </dependency>
+                        </dependencies>
+                    </container>
+                    <configuration>
+                        <properties>
+                            <cargo.start.jvmargs>
+                                -Xdebug
+                                -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9000
+                                -Xnoagent
+                                -Djava.compiler=NONE
+                            </cargo.start.jvmargs>
+                            <cargo.jboss.modules.dir>modules</cargo.jboss.modules.dir>
+                            <cargo.servlet.port>9090</cargo.servlet.port>
+                            <cargo.jboss.management-http.port>9050</cargo.jboss.management-http.port>
+                            <cargo.servlet.users>admin:admin</cargo.servlet.users>
+                        </properties>
+                    </configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>start-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <deployables>
+                                <deployable>
+                                    <!-- Use exploded deploy: override location to point to the exploded webapp. -->
+                                    <location>${project.basedir}/target/${project.artifactId}-${project.version}</location>
+                                    <pingURL>http://localhost:9090/javaee-soteria</pingURL>
+                                    <pingTimeout>120000</pingTimeout> <!-- 2 min -->
+                                    <properties>
+                                        <context>javaee-soteria</context>
+                                    </properties>
+                                </deployable>
+                            </deployables>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -285,7 +282,120 @@
                         </configuration>
                     </plugin>
                 </plugins>
-                <!-- -->
+            </build>
+        </profile>
+        <profile>
+            <id>setup-cargo</id>
+            <activation>
+                <property>
+                    <name>setup</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <inherited>false</inherited>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <configuration>
+                            <container>
+                                <containerId>wildfly10x</containerId>
+                                <zipUrlInstaller>
+                                    <url>
+                                        http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip
+                                    </url>
+                                    <downloadDir>${project.basedir}/cargo/downloads</downloadDir>
+                                    <extractDir>${project.basedir}/cargo</extractDir>
+                                </zipUrlInstaller>
+                            </container>
+                            <configuration>
+                                <properties>
+                                    <cargo.start.jvmargs>
+                                        -Xdebug
+                                        -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=9000
+                                        -Xnoagent
+                                        -Djava.compiler=NONE
+                                    </cargo.start.jvmargs>
+                                    <cargo.jboss.modules.dir>modules</cargo.jboss.modules.dir>
+                                    <cargo.servlet.port>9090</cargo.servlet.port>
+                                    <cargo.jboss.management-http.port>9050</cargo.jboss.management-http.port>
+                                    <cargo.servlet.users>admin:admin</cargo.servlet.users>
+                                </properties>
+                            </configuration>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>install-cargo</id>
+                                <phase>process-test-resources</phase>
+                                <goals><goal>install</goal></goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <inherited>false</inherited>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.8</version>
+                        <executions>
+                            <execution>
+                                <id>copy-db-driver</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.hsqldb</groupId>
+                                            <artifactId>hsqldb</artifactId>
+                                            <version>2.3.2</version>
+                                            <outputDirectory>${wildfly.home.module}/standalone/deployments</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <inherited>false</inherited>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources-ds</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${wildfly.home.module}/standalone/configuration</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/src/main/jboss/configuration</directory>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-modules-wfly-hsqldb</id>
+                                <phase>process-test-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${wildfly.home.module}/modules/system/layers/base/org/hsqldb/main</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/src/main/jboss/modules/org/hsqldb/main</directory>
+                                            <filtering>false</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
