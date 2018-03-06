@@ -69,19 +69,18 @@ Resume steps:
 
 * Running in web-App application (standalone external wildfly server)*
 
-1)mvn process-test-resources -Psetup-cargo
-2)mvn clean install -Pdefault (you found war in target dir)
-3)copy war in external wildfly10x server or deploy it using wildfly:deploy (wildfly maven plugin)
-4)install HsqlDb, run hsqldb and create empty database soteria
+1)mvn clean install -Pdefault (you found war in target dir)
+2)copy war in external wildfly10x server or deploy it using wildfly:deploy (wildfly maven plugin)
+3)install HsqlDb, run hsqldb and create empty database soteria
 5)run wildfly by standalone.bat
 6)open browser to
 http://localhost:8080/javaee-soteria-1.0.0/register.xhtml to register new user
 http://localhost:8080/javaee-soteria-1.0.0/login.xhtml to login with a valid user
 
 *Running test*
-1)mvn process-test-resources -Psetup-cargo
-2)mvn clean install -Pdefault
-3)mvn failsafe:integration-test -> run integration tests (*IT.java) -> cargo launch wildfly and integration tests
+1)mvn clean install -P default (compile and packaging war)
+2)mvn process-test-resources -P setup-cargo (download and install cargo and deploy)
+3)mvn failsafe:integration-test -P runCargo -> run integration tests (*IT.java) -> cargo launch wildfly and integration tests
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
