@@ -5,7 +5,8 @@
     <container qualifier="wildfly10" default="true">
         <configuration>
             <property name="jbossHome">${jboss.home}</property>
-            <!--<property name="modulePath">target/cargo/installs/wildfly-10.1.0.Final/wildfly-10.1.0.Final/modules</property>-->
+            <property name="managementPort">9050</property> <!-- because i change it on cargo plugin-->
+            <!--<property name="modulePath">${jboss.home}/modules</property>-->
         </configuration>
     </container>
 
