@@ -8,6 +8,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Ignore;
@@ -36,7 +37,10 @@ public class ArquillianEmptyTestIT {
     @Deployment
     public static Archive deploy(){
         //importa dipendenze di terze parti e librerie dichiarate nel pom e dipendenze transitive
-        File[] files = Maven.resolver().loadPomFromFile("C:/Progetti/altri/javaee-soteria-master/pom.xml").importRuntimeDependencies().resolve().withTransitivity().asFile();
+        File[] files = Maven.resolver()
+                .loadPomFromFile("C:/Progetti/altri/javaee-soteria-master/pom.xml")//(getPomPath())
+                .importRuntimeDependencies()
+                .asFile();
 //        JavaArchive[] assertjArch = Maven.resolver().resolve("org.assertj:assertj-core").withTransitivity().as(JavaArchive.class);
         //creo filesystem con il war vuoto e aggiungo nel war classi e dipendenze per il test..
         return ShrinkWrap.create(WebArchive.class, "javaee-soteria-1.0.0.war")
@@ -55,16 +59,18 @@ public class ArquillianEmptyTestIT {
 //                .addClass(Sha.class)
 //                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
 //                .addAsResource("META-INF/persistence.xml")
-                    ;
+                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml")
+                .addAsWebInfResource(new StringAsset("<web-app></web-app>"), "web.xml");
 
     }
 
     @Ignore
-    private static Properties getPomPath() {
+    private static String getPomPath() {
         //usare questa sopra per il percorso al pom, ma ora da null pointer
         Properties defaults = loadProperties(ArquillianEmptyTestIT.class.getResourceAsStream(DEFAULT_CONF));
-        System.out.println("*** " + defaults.getProperty("pom.path"));
-        return defaults;
+        String pompath = defaults.getProperty("pom.path");
+        //System.out.println("*** " + defaults.getProperty("pom.path"));
+        return pompath!=null ? pompath : "C:/Progetti/altri/javaee-soteria-master/pom.xml";
     }
 
     @Ignore

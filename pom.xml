@@ -16,11 +16,18 @@
         <IT.skipTests>false</IT.skipTests><!--avvia cargo e lancia i test di integrazione -->
         <JunitTest.skip>true</JunitTest.skip> <!--per ora i test junit sono fermi-->
         <wildfly.home.module>${project.basedir}/cargo/wildfly-10.1.0.Final/wildfly-10.1.0.Final</wildfly.home.module>
-        <!--<wildfly.home.parent>${project.basedir}/.cargo/wildfly-10.1.0.Final/wildfly-10.1.0.Final</wildfly.home.parent>-->
+        <shrinkres.version>2.0.0-beta-2</shrinkres.version>
         <jboss.home>${wildfly.home.module}</jboss.home>
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-bom</artifactId>
+                <version>${shrinkres.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
@@ -122,8 +129,9 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-            <scope>test</scope>
+            <artifactId>shrinkwrap-resolver-depchain</artifactId>
+            <type>pom</type>
+            <version>${shrinkres.version}</version>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
