@@ -28,14 +28,27 @@ public class ArquillianEmptyTestIT {
 
 
     public static final String DEFAULT_CONF = "test.properties";
-//    Account account;
+    public static final String TEST_CLASSES_DIR = "test-classes";
+    public static final String XML_POM_PATH = "pom.path";
+    public static final String XML_PERSISTENCE_PATH = "persistence.path";
+    public static final String XML_BEANS_PATH = "beans.path";
+    public static final String XML_WEB_PATH = "web.path";
+    private static String pompath;
+    private static String persistencePath;
+    private static String beansPath;
+    private static String webPath;
+
+    Account account;
 
     @Deployment
     public static Archive deploy(){
         //importa dipendenze di terze parti e librerie dichiarate nel pom e dipendenze transitive
+        resolveProjectSrcFilesPath();
         File[] files = Maven.resolver()
-                .loadPomFromFile(getPomPath())
-                .importRuntimeDependencies()
+                .loadPomFromFile(pompath)
+                .importRuntimeAndTestDependencies()
+                .resolve()
+                .withTransitivity()
                 .asFile();
 //        JavaArchive[] assertjArch = Maven.resolver().resolve("org.assertj:assertj-core").withTransitivity().as(JavaArchive.class);
         //creo filesystem con il war vuoto e aggiungo nel war classi e dipendenze per il test..
@@ -54,31 +67,34 @@ public class ArquillianEmptyTestIT {
 //                .addClass(SHAAlgorithm.class)
 //                .addClass(Sha.class)
 //                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
-//                .addAsResource("META-INF/persistence.xml")
-                .addAsWebInfResource(new StringAsset("<beans/>"), "beans.xml")
-                .addAsWebInfResource(new StringAsset("<web-app></web-app>"), "web.xml");
+                .addAsResource(new File(persistencePath))
+                .addAsWebInfResource (new File(beansPath))//(new StringAsset("<beans/>"), "beans.xml")
+                .addAsWebInfResource(new File(webPath)); //(new StringAsset("<web-app></web-app>"), "web.xml");
 
     }
 
     @Ignore
-    private static String getPomPath(){
+    private static void resolveProjectSrcFilesPath(){
         //path alla classe
-        String pompath = ArquillianEmptyTestIT.class.getResource(".").getPath();
+        pompath = ArquillianEmptyTestIT.class.getResource(".").getPath();
+        persistencePath = ArquillianEmptyTestIT.class.getResource(".").getPath();
         try {
             String pathOfThisClass = pompath;
             if (pathOfThisClass.startsWith("/")) {
                 pathOfThisClass = pathOfThisClass.substring(1);
             }
             Path pathClass = Paths.get(pathOfThisClass).toAbsolutePath();
-            String subpath = pathClass.toString().substring(0, pathClass.toString().indexOf("test-classes") + 13) + DEFAULT_CONF;
+            String subpath = pathClass.toString().substring(0, pathClass.toString().indexOf(TEST_CLASSES_DIR) + 13) + DEFAULT_CONF;
             Path pathToProperties = pathClass.resolve(subpath);
             FileInputStream fileInputStream = new FileInputStream(pathToProperties.toFile());
             Properties defaults = loadProperties(fileInputStream);
-            pompath = defaults.getProperty("pom.path");
+            pompath = defaults.getProperty(XML_POM_PATH);
+            persistencePath = defaults.getProperty(XML_PERSISTENCE_PATH);
+            beansPath = defaults.getProperty(XML_BEANS_PATH);
+            webPath = defaults.getProperty(XML_WEB_PATH);
         }catch (FileNotFoundException ex){
             ex.printStackTrace();
         }
-        return pompath;
     }
 
     @Ignore
@@ -111,7 +127,7 @@ public class ArquillianEmptyTestIT {
         System.out.println("=========================================");
         System.out.println("This test should run inside the container");
         System.out.println("=========================================");
-//        assertThat(account).isNotNull();
+        assertThat(account).isNotNull();
     }
 
 

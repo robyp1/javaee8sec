@@ -16,7 +16,7 @@
         <IT.skipTests>false</IT.skipTests><!--avvia cargo e lancia i test di integrazione -->
         <JunitTest.skip>true</JunitTest.skip> <!--per ora i test junit sono fermi-->
         <wildfly.home.module>${project.basedir}/cargo/wildfly-10.1.0.Final/wildfly-10.1.0.Final</wildfly.home.module>
-        <shrinkres.version>2.0.0-beta-2</shrinkres.version>
+        <shrinkres.version>2.0.0</shrinkres.version>
         <jboss.home>${wildfly.home.module}</jboss.home>
     </properties>
     <dependencyManagement>
