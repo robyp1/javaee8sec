@@ -6,6 +6,7 @@ import static org.omnifaces.util.Servlets.getRemoteAddr;
 
 import id.swhp.javaee.soteria.business.account.boundary.AccountStore;
 import id.swhp.javaee.soteria.business.account.entity.Account;
+import id.swhp.javaee.soteria.business.account.entity.User;
 import id.swhp.javaee.soteria.business.security.boundary.TokenStore;
 import java.util.Optional;
 import java.util.Set;
@@ -34,11 +35,18 @@ public class SoteriaRememberMeIdentityStore implements RememberMeIdentityStore {
     @Inject
     TokenStore tokenStore;
 
+    @Inject
+    User user;
+
     @Override
     public CredentialValidationResult validate(RememberMeCredential rmc) {
         Optional<Account> account = this.accountStore.getByLoginToken(rmc.getToken(), REMEMBER_ME);
 
         if (account.isPresent()) {
+            Account account1 = account.get();
+            user.setUserId(account1.getId());
+            user.setUserToken(rmc.getToken());
+            user.setUsername(account1.getUsername());
             return new CredentialValidationResult(new CallerPrincipal(account.get().getUsername()));
         } else {
             return INVALID_RESULT;

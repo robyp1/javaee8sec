@@ -2,6 +2,7 @@ package id.swhp.javaee.soteria.application.security;
 
 import id.swhp.javaee.soteria.business.account.boundary.AccountStore;
 import id.swhp.javaee.soteria.business.account.entity.Account;
+import id.swhp.javaee.soteria.business.account.entity.User;
 import id.swhp.javaee.soteria.business.exception.boundary.AccountNotVerifiedException;
 import id.swhp.javaee.soteria.business.exception.boundary.InvalidCredentialException;
 import id.swhp.javaee.soteria.business.exception.boundary.InvalidPasswordException;
@@ -30,6 +31,9 @@ public class SoteriaIdentityStore implements IdentityStore {
     // call our EJB service to validate the account
     @Inject
     AccountStore accountStore;
+
+    @Inject
+    User user;
 
     @Override
     public CredentialValidationResult validate(Credential credential) {
@@ -71,7 +75,9 @@ public class SoteriaIdentityStore implements IdentityStore {
         if (!account.isActive()) {
             throw new AccountNotVerifiedException();
         }
-
+        user.setUserId(account.getId());
+        user.setUserToken(null);
+        user.setUsername(account.getUsername());
         CredentialValidationResult credentialValidationResult = new CredentialValidationResult(account.getUsername());
         return credentialValidationResult;
     }
