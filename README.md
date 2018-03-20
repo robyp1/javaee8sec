@@ -84,3 +84,15 @@ http://localhost:8080/javaee-soteria-1.0.0/login.xhtml to login with a valid use
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+
+mvn process:
+for the first time set persitence to "create", then use "validate"
+mvn clan install -P default
+mvn process-test-resources setup-cargo (extract cargo and wildfly in home project)
+mvn wildfly:deploy (first run in cargo\wildfly-home\bin standalone.bat, then deploy with this command)
+mvn wildfly:undeploy (for remove webapp)
+check if persistence in test is set to "validate"
+mvn failsafe:integration-test -P runcargo (to run wildfly in cargo and run it test with arquillian)
+mvn wildfly:undeploy (for remove webapp)
+
