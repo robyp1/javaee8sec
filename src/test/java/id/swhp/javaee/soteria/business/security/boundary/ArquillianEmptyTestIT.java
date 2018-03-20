@@ -1,7 +1,22 @@
 package id.swhp.javaee.soteria.business.security.boundary;
 
 
+import id.swhp.javaee.soteria.application.jpa.InstantConverter;
+import id.swhp.javaee.soteria.application.security.SoteriaFormAuthenticationMechanism;
+import id.swhp.javaee.soteria.application.security.SoteriaIdentityStore;
+import id.swhp.javaee.soteria.application.security.SoteriaRememberMeIdentityStore;
+import id.swhp.javaee.soteria.business.account.boundary.AccountStore;
 import id.swhp.javaee.soteria.business.account.entity.Account;
+import id.swhp.javaee.soteria.business.account.entity.User;
+import id.swhp.javaee.soteria.business.account.entity.UserNameNotTaken;
+import id.swhp.javaee.soteria.business.account.entity.UserNameNotTakenValidator;
+import id.swhp.javaee.soteria.business.exception.boundary.AccountNotVerifiedException;
+import id.swhp.javaee.soteria.business.exception.boundary.BusinessException;
+import id.swhp.javaee.soteria.business.exception.boundary.InvalidPasswordException;
+import id.swhp.javaee.soteria.business.exception.boundary.InvalidUsernameException;
+import id.swhp.javaee.soteria.business.security.control.AlgorithmProducer;
+import id.swhp.javaee.soteria.business.security.control.PbkdfGenerator;
+import id.swhp.javaee.soteria.business.security.control.SHAGenerator;
 import id.swhp.javaee.soteria.business.security.entity.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -55,17 +70,32 @@ public class ArquillianEmptyTestIT {
         return ShrinkWrap.create(WebArchive.class, "javaee-soteria-1.0.0.war")
                 .addAsLibraries(files)
                 .addClass(Account.class)
+                .addClass(AccountStore.class)
+                .addClass(AccountNotVerifiedException.class)
+                .addClass(AlgorithmProducer.class)
+                .addClass(BusinessException.class)
+                .addClass(HashGenerator.class)
+                .addClass(HashType.class)
+                .addClass(HashServiceType.class)
+                .addClass(InstantConverter.class)
+                .addClass(InvalidPasswordException.class)
+                .addClass(InvalidClassException.class)
+                .addClass(InvalidUsernameException.class)
+                .addClass(PbkdfGenerator.class)
+                .addClass(SHAAlgorithm.class)
+                .addClass(SHAGenerator.class)
+                .addClass(Sha.class)
+                .addClass(SoteriaFormAuthenticationMechanism.class)
+                .addClass(SoteriaIdentityStore.class)
+                .addClass(SoteriaRememberMeIdentityStore.class)
                 .addClass(Token.class)
+                .addClass(TokenScheduler.class)
+                .addClass(TokenStore.class)
                 .addClass(TokenType.class)
-//                .addClass(InvalidPasswordException.class)
-//                .addClass(InvalidUsernameException.class)
-//                .addClass(AccountStore.class)
-//                .addClass(TokenStore.class)
-//                .addClass(HashGenerator.class)
-//                .addClass(HashServiceType.class)
-//                .addClass(HashType.class)
-//                .addClass(SHAAlgorithm.class)
-//                .addClass(Sha.class)
+                .addClass(User.class)
+                .addClass(UserNameNotTaken.class)
+                .addClass(UserNameNotTakenValidator.class)
+                .addClass(InvalidUsernameException.class)
 //                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
                 .addAsResource(new File(persistencePath))
                 .addAsWebInfResource (new File(beansPath))//(new StringAsset("<beans/>"), "beans.xml")
