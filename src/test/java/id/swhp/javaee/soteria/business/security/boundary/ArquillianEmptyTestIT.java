@@ -10,24 +10,26 @@ import id.swhp.javaee.soteria.business.account.entity.Account;
 import id.swhp.javaee.soteria.business.account.entity.User;
 import id.swhp.javaee.soteria.business.account.entity.UserNameNotTaken;
 import id.swhp.javaee.soteria.business.account.entity.UserNameNotTakenValidator;
-import id.swhp.javaee.soteria.business.exception.boundary.AccountNotVerifiedException;
-import id.swhp.javaee.soteria.business.exception.boundary.BusinessException;
-import id.swhp.javaee.soteria.business.exception.boundary.InvalidPasswordException;
-import id.swhp.javaee.soteria.business.exception.boundary.InvalidUsernameException;
+import id.swhp.javaee.soteria.business.exception.boundary.*;
 import id.swhp.javaee.soteria.business.security.control.AlgorithmProducer;
 import id.swhp.javaee.soteria.business.security.control.PbkdfGenerator;
 import id.swhp.javaee.soteria.business.security.control.SHAGenerator;
 import id.swhp.javaee.soteria.business.security.entity.*;
+import id.swhp.javaee.soteria.presentation.Register;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
@@ -53,6 +55,9 @@ public class ArquillianEmptyTestIT {
     private static String beansPath;
     private static String webPath;
 
+//    Account account;
+
+    @Inject
     Account account;
 
     @Deployment
@@ -80,6 +85,7 @@ public class ArquillianEmptyTestIT {
                 .addClass(InstantConverter.class)
                 .addClass(InvalidPasswordException.class)
                 .addClass(InvalidClassException.class)
+                .addClass(InvalidCredentialException.class)
                 .addClass(InvalidUsernameException.class)
                 .addClass(PbkdfGenerator.class)
                 .addClass(SHAAlgorithm.class)
@@ -95,10 +101,10 @@ public class ArquillianEmptyTestIT {
                 .addClass(User.class)
                 .addClass(UserNameNotTaken.class)
                 .addClass(UserNameNotTakenValidator.class)
-                .addClass(InvalidUsernameException.class)
-//                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addClass(Register.class)
                 .addAsResource(new File(persistencePath))
-                .addAsWebInfResource (new File(beansPath))//(new StringAsset("<beans/>"), "beans.xml")
+//                .addAsResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsResource (new File(beansPath))//(new StringAsset("<beans/>"), "beans.xml")
                 .addAsWebInfResource(new File(webPath)); //(new StringAsset("<web-app></web-app>"), "web.xml");
 
     }
@@ -157,9 +163,15 @@ public class ArquillianEmptyTestIT {
         System.out.println("=========================================");
         System.out.println("This test should run inside the container");
         System.out.println("=========================================");
-        assertThat(account).isNotNull();
+//        assertThat(account).isNull();
     }
 
+
+    @Test
+    public void testRegister(){
+        System.out.println(account);
+        assertThat(account).isNotNull();
+    }
 
 
 }
